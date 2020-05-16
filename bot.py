@@ -54,6 +54,10 @@ class TrumpBot(discord.Client):
                 except:
                     print("no")
                     await message.add_reaction("\U0000274c")
+
+            elif message.author.id == 172340872367702016 and message.content == "CLOSE_BOT":
+                database["quit"] = True
+
             else:
                 with open("answers.txt", "a+") as answers:
                     answers.write(f"{message.author.name}: {message.content}\n")
