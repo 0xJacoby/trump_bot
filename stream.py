@@ -6,6 +6,9 @@ class Listener(tweepy.StreamListener):
         if status.user.id == 1261280540503822341:
             with open("tweet.json","r") as f:
                 database  = json.load(f)
+            
+            if database["quit"]:
+                exit()
 
             database["new_tweet"] = True
             database["tweet"] = status.text
