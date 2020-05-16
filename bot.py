@@ -1,6 +1,7 @@
 import json
 import info
 import discord
+import random
 from discord.ext import commands
 import asyncio
 
@@ -49,11 +50,12 @@ class TrumpBot(discord.Client):
             elif message.author.id == 172340872367702016 and message.content[:5] == "!send":
                 try:
                     await self.get_user(database["subs"][int(message.content[6])]).send(message.content[8:])
-                    print("test")
                     await message.add_reaction("\U00002705")
                 except:
-                    print("no")
                     await message.add_reaction("\U0000274c")
+                    if not id in database["blocked"]:
+                            await self.get_user(172340872367702016).send(f"Yo boss, {self.get_user(id)} blocked me. :worried:")
+                            database["blocked"].append(id)
 
             elif message.author.id == 172340872367702016 and message.content == "CLOSE_BOT":
                 database["quit"] = True
@@ -72,6 +74,15 @@ class TrumpBot(discord.Client):
     async def discord_tweet(self):
         await self.wait_until_ready()
 
+        message_presets = [
+        ":sunglasses: **OMG look what ma boi TRUMP just tweeted:**", 
+        ":angel: **Oh jeez, our lord and saviour donald j trump has blessed us with another amazing tweet dude:**", 
+        ":sunglasses: **DAMN These stupid fucking libtards. You tell' em trump:**", 
+        ":tv: **CNN IS FAKE NEWS MAN. Fox News is where its at. and their hero trump is tweeting:**",
+        "**Trump knows words alright, her has the best words:**",
+        "**Sleepy joe is never gonna win hahah GO TRUMP:**"
+        ]
+
         while not self.is_closed():
 
             with open("tweet.json","r") as f:
@@ -83,7 +94,10 @@ class TrumpBot(discord.Client):
             if database["new_tweet"] == True:
                 for id in database["subs"]:
                     try:
-                        await self.get_user(id).send(database["tweet"])
+                        if "https://" in database["tweet"]:
+                            await self.get_user(id).send(database["tweet"]+"\n#Trump2020")
+                        else:
+                            await self.get_user(id).send(message_presets[random.randint(0, len(message_presets)-1)]+"\n```"+database["tweet"]+"```\n#Trump2020")
                     except:
                         if not id in database["blocked"]:
                             await self.get_user(172340872367702016).send(f"Yo boss, {self.get_user(id)} blocked me. :worried:")
